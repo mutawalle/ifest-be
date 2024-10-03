@@ -151,6 +151,7 @@ async def add_question(request: Request, background_tasks: BackgroundTasks, file
                 "created_at": datetime.datetime.now()
             })
 
+            background_tasks.add_task(analyze, file_location, email, newUuid)
 
             return {"message": "uploaded and analyzing started"}
         else:
@@ -178,6 +179,10 @@ async def answer_question(request: Request, background_tasks: BackgroundTasks, f
             question["messages"] = messages        
             questionCollection.find_one_and_update({"id": id},{ "$set": { "messages": messages, "status": "UPLOADED"}})
 
+            if question["category"] == "technical":
+                background_tasks.add_task(analyzeCode, file_location, id, code)
+            else:
+                background_tasks.add_task(analyze, file_location, email, id)
 
 
             return {"message": "uploaded and analyzing started"}
