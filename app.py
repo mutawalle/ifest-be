@@ -34,6 +34,10 @@ async def verify_token(request: Request, call_next):
     response = await call_next(request)
     return response
 
+app.include_router(basic_router)
+app.include_router(vacancy_router)
+app.include_router(question_router)
+app.include_router(cv_router)
 
 if __name__ == "__main__":
     import uvicorn
